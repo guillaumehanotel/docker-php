@@ -1,12 +1,13 @@
-FROM guillaumehanotel/php:prod-8.2
+FROM guillaumehanotel/php:8.2-prod-latest
 
-ENV XDEBUG_MODE debug
+ENV XDEBUG_MODE develop,debug,coverage
 ENV XDEBUG_START_WITH_REQUEST trigger
 ENV XDEBUG_DISCOVER_CLIENT_HOST true
 ENV XDEBUG_IDEKEY PHPSTORM
 ENV XDEBUG_REMOTE_CLIENT_HOST "host.docker.internal"
 ENV XDEBUG_REMOTE_CLIENT_PORT 9100
 ENV XDEBUG_MAX_NESTING_LEVEL 9999
+
 
 #Install & Enable Xdebug
 RUN pecl install xdebug \

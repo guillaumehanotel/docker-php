@@ -1,36 +1,77 @@
-# docker-php
+# Docker PHP Images
 
-## php :  
-Base : [PHP 8, FPM] + PHP Extensions (Redis, ODBC, ...) + Python & Pandas
-Il y a une version prod et une version dev :
-La version dev se base sur la php:prod-latest et rajoute XDebug.
+This repository contains Docker images for PHP development and production environments.
 
-Mettre à jour les images :
-Si par exemple vous voulez modifier le Dockerfile de prod :
+## Available PHP Versions
 
-Une fois les modifications faites, il y a 4 étapes à faire :
+- PHP 8.2 (FPM)
+- PHP 8.3 (FPM)
+- PHP 8.4 (FPM)
 
-rebuild l'image en précisant le tag de la nouvelle version mis à jour :  
-```
-docker build -t guillaumehanotel/php:8.2-prod-1.0.3 .
+Each version has both development and production variants.
+
+## Image Structure
+
+- **Base**: PHP-FPM with essential extensions
+- **Production**: Optimized for production environments
+- **Development**: Based on the production image with additional development tools (XDebug)
+
+## Rebuilding and Publishing Images
+
+When you need to update an image (e.g., adding extensions or changing configurations), follow these steps:
+
+### Step 1: Build the versioned production image
+
+```bash
+# Navigate to the production directory for the PHP version
+cd 8.x/production
+
+# Build with specific version tag
+docker build -t username/php:8.x-prod-x.y.z .
 ```
 
-push l'image sur le hub : (docker login à faire au préalable)   
-```
-docker push guillaumehanotel/php:8.2-prod-1.0.3
+### Step 2: Push the versioned production image
+
+```bash
+# Login to Docker Hub (if not already logged in)
+docker login
+
+# Push the versioned image
+docker push username/php:8.x-prod-x.y.z
 ```
 
-rebuild l'image en précisant cette fois que c'est la latest version :  
-```
-docker build -t guillaumehanotel/php:8.2-prod-latest .
-```
-push l'image latest sur le hub :  
-```
-docker push guillaumehanotel/php:8.2-prod-latest
-```
-Et oui, il faut rebuild la dev puisque celle-ci se base sur prod, il faut aussi refaire la manip pour dev :)
+### Step 3: Build and push the 'latest' production image
 
-## Outils
+```bash
+# Build the latest tag
+docker build -t username/php:8.x-prod-latest .
+
+# Push the latest tag
+docker push username/php:8.x-prod-latest
+```
+
+### Step 4: Rebuild the development image
+
+Since the development image is based on the production image, you need to rebuild it after updating the production image:
+
+```bash
+# Navigate to the development directory
+cd ../dev
+
+# Build with specific version tag
+docker build -t username/php:8.x-dev-x.y.z .
+
+# Push the versioned image
+docker push username/php:8.x-dev-x.y.z
+
+# Build and push the latest tag
+docker build -t username/php:8.x-dev-latest .
+docker push username/php:8.x-dev-latest
+```
+
+Replace `username` with your Docker Hub username, `8.x` with the PHP version, and `x.y.z` with your semantic version number.
+
+## Included Tools
 
 - nano
 - ffmpeg
@@ -42,8 +83,7 @@ Et oui, il faut rebuild la dev puisque celle-ci se base sur prod, il faut aussi 
 - zsh
 - cron
 
-
-## Extensions
+## PHP Extensions
 
 - zip
 - pdo
@@ -55,6 +95,32 @@ Et oui, il faut rebuild la dev puisque celle-ci se base sur prod, il faut aussi 
 - intl
 - dom
 - redis
-- xdebug
+- xdebug (dev images only)
 - imagick
 - opcache
+
+## Usage Example
+
+To use these images in your projects:
+
+```yaml
+# docker-compose.yml example
+services:
+  php:
+    image: username/php:8.4-prod-latest
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+```
+
+For development environments:
+
+```yaml
+# docker-compose.yml example
+services:
+  php:
+    image: username/php:8.4-dev-latest
+    volumes:
+      - ./:/var/www/html
+    working_dir: /var/www/html
+```

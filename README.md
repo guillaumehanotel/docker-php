@@ -4,7 +4,7 @@ Ce dépôt contient des images Docker pour les environnements de développement 
 
 ## Versions PHP disponibles
 
-- PHP 8.2 (FPM)
+- PHP 8.4 (FPM)
 - PHP 8.3 (FPM)
 - PHP 8.4 (FPM)
 
@@ -24,10 +24,10 @@ Lorsque vous devez mettre à jour une image (par exemple, ajouter des extensions
 
 ```bash
 # Naviguer vers le répertoire de production pour la version PHP
-cd 8.2/production
+cd 8.4/production
 
 # Construire avec un tag de version spécifique
-docker build -t guillaumehanotel/php:8.2-prod-1.0.3 .
+docker build -t guillaumehanotel/php:8.4-prod-1.0.0 .
 ```
 
 ### Étape 2 : Pousser l'image de production versionnée
@@ -37,17 +37,17 @@ docker build -t guillaumehanotel/php:8.2-prod-1.0.3 .
 docker login
 
 # Pousser l'image versionnée
-docker push guillaumehanotel/php:8.2-prod-1.0.3
+docker push guillaumehanotel/php:8.4-prod-1.0.0
 ```
 
 ### Étape 3 : Construire et pousser l'image 'latest' de production
 
 ```bash
 # Construire le tag latest
-docker build -t guillaumehanotel/php:8.2-prod-latest .
+docker build -t guillaumehanotel/php:8.4-prod-latest .
 
 # Pousser le tag latest
-docker push guillaumehanotel/php:8.2-prod-latest
+docker push guillaumehanotel/php:8.4-prod-latest
 ```
 
 ### Étape 4 : Reconstruire l'image de développement
@@ -59,17 +59,17 @@ Comme l'image de développement est basée sur l'image de production, vous devez
 cd ../dev
 
 # Construire avec un tag de version spécifique
-docker build -t guillaumehanotel/php:8.2-dev-1.0.3 .
+docker build -t guillaumehanotel/php:8.4-dev-1.0.0 .
 
 # Pousser l'image versionnée
-docker push guillaumehanotel/php:8.2-dev-1.0.3
+docker push guillaumehanotel/php:8.4-dev-1.0.0
 
 # Construire et pousser le tag latest
-docker build -t guillaumehanotel/php:8.2-dev-latest .
-docker push guillaumehanotel/php:8.2-dev-latest
+docker build -t guillaumehanotel/php:8.4-dev-latest .
+docker push guillaumehanotel/php:8.4-dev-latest
 ```
 
-Remplacez `8.2` par la version PHP souhaitée et `1.0.3` par votre numéro de version sémantique.
+Remplacez `8.4` par la version PHP souhaitée et `1.0.0` par votre numéro de version sémantique.
 
 ## Outils inclus
 

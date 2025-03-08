@@ -1,46 +1,24 @@
 FROM guillaumehanotel/php:8.4-prod-latest
 
-# Installer les dépendances et outils de développement
-RUN apt-get update && apt-get install -y \
-    git \
-    wget \
-    nano \
-    sudo \
-    ffmpeg \
-    supervisor \
-    default-mysql-client \
-    zsh \
-    cron \
-    libpq-dev \
-    libc-client-dev \
-    libkrb5-dev \
-    libmagickwand-dev \
+# Switch to root for installation operations
+USER root
+
+# Install development dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    autoconf \
+    gcc \
+    g++ \
+    make \
+    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Configurer et installer les extensions supplémentaires
-RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-install -j$(nproc) \
-    pdo_pgsql \
-    intl \
-    imap
-
-# Installer Redis
-RUN pecl install redis \
-    && docker-php-ext-enable redis
-
-# Installer Imagick
-RUN pecl install imagick \
-    && docker-php-ext-enable imagick
-
-# Installer Xdebug
-RUN pecl install xdebug \
+# Install Xdebug for debugging
+RUN pecl install xdebug --no-cache \
     && docker-php-ext-enable xdebug
 
-# Installer Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Installer Oh My Zsh pour un meilleur environnement de développement
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+# Install Laravel Installer globally
+RUN composer global require laravel/installer \
+    && echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> /root/.zshrc
 
 # Créer un répertoire pour les logs
 RUN mkdir -p /var/log/php \
@@ -51,3 +29,25 @@ RUN mkdir -p /var/log/php \
 
 # Copier le fichier php-dev.ini
 COPY php-dev.ini /usr/local/etc/php/conf.d/zz-php-dev.ini
+
+# Add global Composer binaries to PATH for laravel user
+RUN echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> /home/laravel/.zshrc
+
+# Set permissions for Laravel user
+RUN chown -R laravel:laravel /home/laravel
+
+# Add Laravel-specific healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD php -v || exit 1
+
+# Switch back to Laravel user
+USER laravel
+
+# Set shell to Zsh
+SHELL ["/bin/zsh", "-c"]
+
+# Expose port for PHP-FPM
+EXPOSE 9000
+
+# Default command
+CMD ["php-fpm"]

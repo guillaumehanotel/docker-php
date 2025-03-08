@@ -1,77 +1,77 @@
-# Docker PHP Images
+# Images Docker PHP
 
-This repository contains Docker images for PHP development and production environments.
+Ce dépôt contient des images Docker pour les environnements de développement et de production PHP.
 
-## Available PHP Versions
+## Versions PHP disponibles
 
 - PHP 8.2 (FPM)
 - PHP 8.3 (FPM)
 - PHP 8.4 (FPM)
 
-Each version has both development and production variants.
+Chaque version dispose de variantes pour le développement et la production.
 
-## Image Structure
+## Structure des images
 
-- **Base**: PHP-FPM with essential extensions
-- **Production**: Optimized for production environments
-- **Development**: Based on the production image with additional development tools (XDebug)
+- **Base** : PHP-FPM avec les extensions essentielles
+- **Production** : Optimisée pour les environnements de production
+- **Développement** : Basée sur l'image de production avec des outils supplémentaires (XDebug)
 
-## Rebuilding and Publishing Images
+## Reconstruction et publication des images
 
-When you need to update an image (e.g., adding extensions or changing configurations), follow these steps:
+Lorsque vous devez mettre à jour une image (par exemple, ajouter des extensions ou modifier des configurations), suivez ces étapes :
 
-### Step 1: Build the versioned production image
+### Étape 1 : Construire l'image de production versionnée
 
 ```bash
-# Navigate to the production directory for the PHP version
-cd 8.x/production
+# Naviguer vers le répertoire de production pour la version PHP
+cd 8.2/production
 
-# Build with specific version tag
-docker build -t username/php:8.x-prod-x.y.z .
+# Construire avec un tag de version spécifique
+docker build -t guillaumehanotel/php:8.2-prod-1.0.3 .
 ```
 
-### Step 2: Push the versioned production image
+### Étape 2 : Pousser l'image de production versionnée
 
 ```bash
-# Login to Docker Hub (if not already logged in)
+# Se connecter à Docker Hub (si ce n'est pas déjà fait)
 docker login
 
-# Push the versioned image
-docker push username/php:8.x-prod-x.y.z
+# Pousser l'image versionnée
+docker push guillaumehanotel/php:8.2-prod-1.0.3
 ```
 
-### Step 3: Build and push the 'latest' production image
+### Étape 3 : Construire et pousser l'image 'latest' de production
 
 ```bash
-# Build the latest tag
-docker build -t username/php:8.x-prod-latest .
+# Construire le tag latest
+docker build -t guillaumehanotel/php:8.2-prod-latest .
 
-# Push the latest tag
-docker push username/php:8.x-prod-latest
+# Pousser le tag latest
+docker push guillaumehanotel/php:8.2-prod-latest
 ```
 
-### Step 4: Rebuild the development image
+### Étape 4 : Reconstruire l'image de développement
 
-Since the development image is based on the production image, you need to rebuild it after updating the production image:
+Comme l'image de développement est basée sur l'image de production, vous devez la reconstruire après avoir mis à jour l'image de production :
 
 ```bash
-# Navigate to the development directory
+# Naviguer vers le répertoire de développement
 cd ../dev
 
-# Build with specific version tag
-docker build -t username/php:8.x-dev-x.y.z .
+# Construire avec un tag de version spécifique
+docker build -t guillaumehanotel/php:8.2-dev-1.0.3 .
 
-# Push the versioned image
-docker push username/php:8.x-dev-x.y.z
+# Pousser l'image versionnée
+docker push guillaumehanotel/php:8.2-dev-1.0.3
 
-# Build and push the latest tag
-docker build -t username/php:8.x-dev-latest .
-docker push username/php:8.x-dev-latest
+# Construire et pousser le tag latest
+docker build -t guillaumehanotel/php:8.2-dev-latest .
+docker push guillaumehanotel/php:8.2-dev-latest
 ```
 
-Replace `username` with your Docker Hub username, `8.x` with the PHP version, and `x.y.z` with your semantic version number.
+Remplacez `8.2` par la version PHP souhaitée et `1.0.3` par votre numéro de version sémantique.
 
-## Included Tools
+## Outils inclus
 
 - nano
 - ffmpeg
@@ -83,7 +83,7 @@ Replace `username` with your Docker Hub username, `8.x` with the PHP version, an
 - zsh
 - cron
 
-## PHP Extensions
+## Extensions PHP
 
 - zip
 - pdo
@@ -95,31 +95,31 @@ Replace `username` with your Docker Hub username, `8.x` with the PHP version, an
 - intl
 - dom
 - redis
-- xdebug (dev images only)
+- xdebug (images dev uniquement)
 - imagick
 - opcache
 
-## Usage Example
+## Exemple d'utilisation
 
-To use these images in your projects:
+Pour utiliser ces images dans vos projets :
 
 ```yaml
-# docker-compose.yml example
+# exemple de docker-compose.yml
 services:
   php:
-    image: username/php:8.4-prod-latest
+    image: guillaumehanotel/php:8.4-prod-latest
     volumes:
       - ./:/var/www/html
     working_dir: /var/www/html
 ```
 
-For development environments:
+Pour les environnements de développement :
 
 ```yaml
-# docker-compose.yml example
+# exemple de docker-compose.yml
 services:
   php:
-    image: username/php:8.4-dev-latest
+    image: guillaumehanotel/php:8.4-dev-latest
     volumes:
       - ./:/var/www/html
     working_dir: /var/www/html

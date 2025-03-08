@@ -27,8 +27,8 @@ RUN mkdir -p /var/log/php \
     && chmod 777 /var/log/php/error.log \
     && chmod 777 /var/log/xdebug.log
 
-# Copier le fichier php-dev.ini
-COPY php-dev.ini /usr/local/etc/php/conf.d/zz-php-dev.ini
+# Copy php.ini configuration
+COPY php.ini /usr/local/etc/php/
 
 # Add global Composer binaries to PATH for laravel user
 RUN echo 'export PATH="$PATH:$HOME/.composer/vendor/bin"' >> /home/laravel/.zshrc

@@ -57,6 +57,13 @@ RUN pecl install redis --no-cache && docker-php-ext-enable redis \
     && pecl install apcu --no-cache && docker-php-ext-enable apcu \
     && pecl install imagick --no-cache && docker-php-ext-enable imagick
 
+
+# Install Python and Pip
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Install Python dependencies directly
+RUN pip3 install --break-system-packages requests python-dotenv
+
 # Install Composer from the official image
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
@@ -74,16 +81,17 @@ COPY php.ini /usr/local/etc/php/
 ARG USER_ID=1000
 ARG GROUP_ID=1000
 RUN groupadd -g ${GROUP_ID} laravel && \
-    useradd -u ${USER_ID} -g laravel -m laravel -s /bin/zsh
-
-# Create Laravel storage volume
-VOLUME ["/var/www/html/storage"]
+    useradd -u ${USER_ID} -g laravel -m laravel -s /bin/zsh && \
+    usermod -aG www-data,root laravel
 
 # Set working directory
 WORKDIR /var/www/html
 
 # Set appropriate permissions for Laravel
 RUN chown -R laravel:laravel /var/www/html
+
+# Allow Laravel user to run commands as root -> Maybe not the best idea
+RUN echo "laravel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Add Laravel-specific healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
